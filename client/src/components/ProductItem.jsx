@@ -1,11 +1,20 @@
 // client/src/components/ProductItem.js
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { itemContext } from "../context/ItemContext";
 
 const ProductItem = ({ product }) => {
-  const { addToCart, removeFromCart } = useContext(itemContext);
+  const { addToCart, removeFromCart, productInCart } = useContext(itemContext);
+  function checkCart() {
+    let disable = false;
+    productInCart.map((item) => {
+      if (item._id === product._id) {
+        disable = true;
+      }
+    });
+    return disable;
+  }
+  const [add, setAdd] = useState(!checkCart());
   const handleAddToCart = (product) => {
-    console.log(product);
     addToCart(product);
   };
   const handleRemoveToCart = (product) => {
@@ -19,8 +28,24 @@ const ProductItem = ({ product }) => {
         <h3 style={{ fontWeight: "700" }}>{product.name}</h3>
         <p style={{ fontWeight: "300" }}>{product.description}</p>
         <p style={{ fontWeight: "500" }}>Price: {product.price} Rs</p>
-        <button onClick={() => handleAddToCart(product)}>Add to Cart</button>
-        <button onClick={() => handleRemoveToCart(product)}>-</button>
+        <button
+          onClick={() => {
+            handleAddToCart(product);
+            setAdd(false);
+          }}
+          disabled={!add}
+        >
+          Add to Cart
+        </button>
+        <button
+          onClick={() => {
+            handleRemoveToCart(product);
+            setAdd(true);
+          }}
+          disabled={add}
+        >
+          -
+        </button>
       </div>
     </div>
   );
